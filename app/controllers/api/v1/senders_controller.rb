@@ -4,8 +4,8 @@ class Api::V1::SendersController < ApplicationController
 
   def create
   	respond_to do |format|
-  		if valid_email?(checked_params)
-  			EmailSender.notify(data)
+  		if data = valid_email?(checked_params)
+  			EmailSender.notify(data).deliver
   			format.json { render json: {success: true} }
   		else
   			format.json { render json: {success: false} }
@@ -16,7 +16,7 @@ class Api::V1::SendersController < ApplicationController
   private
 
   def checked_params
-  	params.permit :to, :sender, :body
+  	params.require(:sender).permit :to, :subject, :body
   end
 
   def valid_email?(data)
@@ -24,7 +24,7 @@ class Api::V1::SendersController < ApplicationController
   	to = data[:to]
   	if to && m = to.match(email_regex)
   		data[:email] = m[1]
-  		return true
+      return data
   	else
   		return false
   	end

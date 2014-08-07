@@ -7,6 +7,7 @@ class EmailSender < ActionMailer::Base
   #   en.email_sender.notify.subject
   #
   def notify(data)
+    puts data[:email]
     @body = data[:body]
     mail to: data[:email], subject: data[:subject]
   end
