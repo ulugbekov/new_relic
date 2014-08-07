@@ -5,7 +5,7 @@ class Api::V1::SendersController < ApplicationController
   def create
   	respond_to do |format|
   		if valid_email?(checked_params)
-  			
+  			EmailSender.notify(data)
   			format.json { render json: {success: true} }
   		else
   			format.json { render json: {success: false} }
